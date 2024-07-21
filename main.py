@@ -56,6 +56,7 @@ genai.configure(api_key=API_KEY)
 
 def extract_json_from_text(text):
     text = text.replace("'",'"')
+    print(text)
     try:
         print("this1")
         return json.loads(text)
@@ -68,7 +69,7 @@ def extract_json_from_text(text):
         if matches:
             try:
                 json_object = json.loads(matches[0])
-                print("this1")
+                print("this2")
                 return json_object
             except json.JSONDecodeError as error:
                 print('JSON 파싱 오류:', error)
@@ -81,10 +82,10 @@ def extract_json_from_text(text):
 def get_main_prompt(UTCMap):
        
     return f"""
-###{UTCMap["month"]}월 {UTCMap["day"]}일에 일어났던 역사적 사건들
+###{UTCMap["month"]}월 {UTCMap["day"]}일에 일어났던 역사적 사건들(위키피디아 참고)
 {get_wiki_data (UTCMap)}
     ###오늘의 역사 라는 서비스를 할거야. 상상력을 조금 포함해서(단, 근거는 있어야 함) "현재 무슨일이 일어나고 있다"와 같은 형태로 현장에 있는것처럼 묘사해서 두줄로 써줘.
-    타임머신을 타고 과거여행을 하는 것이라고 생각하면 돼. 말투는 예시를 참고해서 적당히 구어체로 써줘.
+    타임머신을 타고 과거여행을 하는 것이라고 생각하면 돼. 말투는 예시를 참고해서 적당히 구어체로 써줘. 위에 위키피디아 자료가 이상하거나 부실하면 니가 알고있는 지식을 추가해도 돼.
 
 ###{UTCMap["year"]}년을 제외한 년도 중 {UTCMap["month"]}월 {UTCMap["day"]}일 {UTCMap["hour"]}시 {UTCMap["minute"]}분에 일어났을 역사적인 사건을 묘사해줘.
 시간 기준으로 아직 일어나지 않았을 것 같은 일은 절대 쓰면 안돼. 
@@ -92,7 +93,7 @@ def get_main_prompt(UTCMap):
 ###다음 json 형태에 맞춰 년도기준 내림차순으로 중요한 사건 위주로 최대 20개까지만 써줘. 
 {
 	[
-		{"year" : "1592" , "content" : "여기는 조선, 일본의 군사들이 이제 막 조선에 상륙했다!. 내 옆에 있는 봉화수는 그걸 보고 봉수 3개를 지폈다!"}
+		{"year" : "1592" , "content" : "내용"}
 		, ...
 	]
 }
@@ -123,7 +124,7 @@ def generate_api():
                 response = model.generate_content(content)
                 json_text = extract_json_from_text(response.text)
             if json_text == []:
-                return [{"2024" : "현재 당신이 이 화면을 보고 있습니다."}]
+                return [{"year":"2024" ,"content": "현재 당신이 이 화면을 보고 있습니다."}]
             return json_text
         except Exception as e:
             return jsonify({ "error": str(e) })

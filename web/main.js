@@ -48,6 +48,8 @@ function CurMap() {
   
   
 const submit = async () => {
+    const loading1 = document.getElementById('loading1');
+    const loading = document.getElementById('loading');
     const eventList = document.getElementById('event-list');
     try {
         let contents = {
@@ -70,17 +72,17 @@ const submit = async () => {
             card.innerHTML = `
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">${data.year}년에는...</h5>
-                        <p class="card-text">${data.content}</p>
+                        <h5 class="card-title">${data.year+""}년에는...</h5>
+                        <p class="card-text">${data.content+""}</p>
                     </div>
                 </div>
             `;
             eventList.appendChild(card);
         });
     } catch (e) {
-        eventList.innerHTML += '<hr>' + e;
+        eventList.innerHTML += '<hr>잠시후 다시 시도해주세요!';
     }finally {
-        // 로딩 바 숨기기
+        loading1.style.display = 'none';
         loading.style.display = 'none';
     }
 }
